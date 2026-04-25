@@ -1,0 +1,93 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function getUserId() {
+      return request.auth.uid;
+    }
+
+    function isBusinessMember(businessId) {
+      return isSignedIn() &&
+             get(/databases/$(database)/documents/businesses/$(businessId))
+             .data.members[getUserId()] != null;
+    }
+
+    function isBusinessOwner(businessId) {
+      return isSignedIn() &&
+             get(/databases/$(database)/documents/businesses/$(businessId))
+             .data.ownerId == getUserId();
+    }
+
+    function monthlyQuotaRemaining(businessId) {
+      let sub = get(/databases/$(database)/documents/businesses/$(businessId));
+      return sub.data.monthlyQuota > sub.data.currentMonthUsage;
+    }
+
+    // Users
+    match /users/{userId} {
+      allow read: if isSignedIn() && userId == getUserId();
+      allow create: if isSignedIn() && userId == getUserId();
+      allow update: if isSignedIn() && userId == getUserId();
+    }
+
+    // Businesses
+    match /businesses/{businessId} {
+      allow read: if isBusinessMember(businessId);
+      allow update: if isBusinessOwner(businessId);
+      allow delete: if isBusinessOwner(businessId);
+
+      // Locations
+      match /locations/{locationId} {
+        allow read: if isBusinessMember(businessId);
+        allow create: if isBusinessOwner(businessId);
+        allow update: if isBusinessOwner(businessId);
+        allow delete: if isBusinessOwner(businessId);
+      }
+
+      // Reviews
+      match /reviews/{reviewId} {
+        allow read: if isBusinessMember(businessId);
+        allow write: if false;
+      }
+
+      // Generated Replies
+      match /generatedReplies/{replyId} {
+        allow read: if isBusinessMember(businessId);
+        allow create: if isBusinessMember(businessId) &&
+                        monthlyQuotaRemaining(businessId);
+        allow update: if isBusinessMember(businessId);
+      }
+
+      // Response History
+      match /responseHistory/{historyId} {
+        allow read: if isBusinessMember(businessId);
+        allow write: if false;
+      }
+
+      // Brand Voices
+      match /brandVoices/{voiceId} {
+        allow read: if isBusinessMember(businessId);
+        allow create: if isBusinessOwner(businessId);
+        allow update: if isBusinessOwner(businessId);
+      }
+
+      // Usage Records
+      match /usageRecords/{month} {
+        allow read: if isBusinessOwner(businessId);
+        allow write: if false;
+      }
+    }
+
+    // Subscriptions
+    match /subscriptions/{subscriptionId} {
+      allow read: if isSignedIn() &&
+                     resource.data.businessId in
+                     get(/databases/$(database)/documents/users/$(getUserId())).data.businesses;
+      allow write: if false;
+    }
+  }
+}

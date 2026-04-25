@@ -1,0 +1,21 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isBusinessMember(businessId) {
+      return request.auth != null;
+    }
+
+    // Review images
+    match /businesses/{businessId}/reviews/{allPaths=**} {
+      allow read: if isBusinessMember(businessId);
+      allow write: if false;
+    }
+
+    // Brand assets
+    match /businesses/{businessId}/assets/{allPaths=**} {
+      allow read: if isBusinessMember(businessId);
+      allow write: if request.auth.uid == resource.metadata.ownerId;
+    }
+  }
+}
