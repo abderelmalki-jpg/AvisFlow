@@ -269,3 +269,25 @@ export const createBrandVoice = async (
 
   return voice;
 };
+
+export const updateBusinessGoogleToken = async (
+  businessId: string,
+  googleAccessToken: string,
+  googleRefreshToken?: string,
+  googleAccountId?: string
+): Promise<void> => {
+  const update: any = {
+    googleAccessToken,
+    updatedAt: new Date(),
+  };
+
+  if (googleRefreshToken) {
+    update.googleRefreshToken = googleRefreshToken;
+  }
+
+  if (googleAccountId) {
+    update.googleAccountId = googleAccountId;
+  }
+
+  await adminDb.collection("businesses").doc(businessId).update(update);
+};
