@@ -19,8 +19,18 @@ export function useBusinesses() {
           return;
         }
 
-        // TODO: Fetch from API endpoint
-        setBusinesses([]);
+        const response = await fetch("/api/businesses", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch businesses");
+        }
+
+        const data = await response.json();
+        setBusinesses(data.businesses || []);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch businesses");
       } finally {

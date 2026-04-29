@@ -1,21 +1,7 @@
-// Auth helpers
-import { auth } from "@/lib/firebase/client";
+// Server-side auth helpers (use only in server actions and API routes)
 import { adminAuth, adminDb } from "@/lib/firebase/admin";
 import { User } from "@/lib/types";
 import { createUser } from "@/lib/db/mutations";
-
-export const getCurrentUser = async () => {
-  try {
-    const user = auth.currentUser;
-    if (!user) return null;
-
-    const idToken = await user.getIdToken();
-    return { user, idToken };
-  } catch (error) {
-    console.error("Error getting current user:", error);
-    return null;
-  }
-};
 
 export const verifyIdToken = async (token: string) => {
   try {
@@ -44,13 +30,4 @@ export const getOrCreateUser = async (
     email,
     displayName: displayName || email.split("@")[0],
   });
-};
-
-export const signOut = async () => {
-  try {
-    await auth.signOut();
-  } catch (error) {
-    console.error("Error signing out:", error);
-    throw error;
-  }
 };

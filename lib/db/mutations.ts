@@ -1,5 +1,5 @@
 // Firestore mutation helpers
-import { adminDb } from "@/lib/firebase/admin";
+import { adminDb, FieldValue } from "@/lib/firebase/admin";
 import {
   Business,
   Location,
@@ -50,13 +50,16 @@ export const createBusiness = async (
 
   await adminDb.collection("businesses").doc(businessId).set(business);
 
-  // Add to user's businesses
+  // Add to user's businesses (or create user if doesn't exist)
   await adminDb
     .collection("users")
     .doc(ownerId)
-    .update({
-      businesses: adminDb.FieldValue.arrayUnion(businessId),
-    });
+    .set(
+      {
+        businesses: FieldValue.arrayUnion(businessId),
+      },
+      { merge: true }
+    );
 
   return business;
 };
@@ -225,7 +228,7 @@ export const incrementBusinessUsage = async (
     .collection("businesses")
     .doc(businessId)
     .update({
-      currentMonthUsage: adminDb.FieldValue.increment(1),
+      currentMonthUsage: FieldValue.increment(1),
     });
 
   // Return new value (requires a follow-up query)

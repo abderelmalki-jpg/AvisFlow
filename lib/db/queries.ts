@@ -22,11 +22,30 @@ export const getBusinessById = async (
 };
 
 export const getBusinessesByUser = async (userId: string): Promise<Business[]> => {
-  const snapshot = await adminDb
-    .collection("businesses")
-    .where("members", "array-contains", userId)
-    .get();
-  return snapshot.docs.map((doc) => doc.data() as Business);
+  // Get user to find their business IDs
+  const userDoc = await adminDb.collection("users").doc(userId).get();
+  if (!userDoc.exists) {
+    return [];
+  }
+
+  const user = userDoc.data() as User;
+  if (!user.businesses || user.businesses.length === 0) {
+    return [];
+  }
+
+  // Fetch all businesses
+  const businesses: Business[] = [];
+  for (const businessId of user.businesses) {
+    const businessDoc = await adminDb
+      .collection("businesses")
+      .doc(businessId)
+      .get();
+    if (businessDoc.exists) {
+      businesses.push(businessDoc.data() as Business);
+    }
+  }
+
+  return businesses;
 };
 
 export const getLocationsByBusiness = async (
@@ -66,8 +85,15 @@ export const getReviewsByBusiness = async (
     query = query.where("status", "==", status);
   }
 
-  const snapshot = await query.orderBy("createdAt", "desc").get();
-  return snapshot.docs.map((doc) => doc.data() as Review);
+  const snapshot = await query.get();
+  const reviews = snapshot.docs.map((doc) => doc.data() as Review);
+
+  // Sort by createdAt descending
+  return reviews.sort((a, b) => {
+    const aDate = a.createdAt instanceof Date ? a.createdAt.getTime() : new Date(a.createdAt).getTime();
+    const bDate = b.createdAt instanceof Date ? b.createdAt.getTime() : new Date(b.createdAt).getTime();
+    return bDate - aDate;
+  });
 };
 
 export const getReviewById = async (

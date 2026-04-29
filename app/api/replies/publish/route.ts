@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyIdToken } from "@/lib/utils/auth";
-import { getBusinessById, getGeneratedReplyById } from "@/lib/db/queries";
+import {
+  getBusinessById,
+  getGeneratedReplyById,
+  getReviewById,
+} from "@/lib/db/queries";
 import { updateReplyStatus, updateReviewStatus } from "@/lib/db/mutations";
+import { googleBusinessApi } from "@/lib/google/api";
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,7 +20,7 @@ export async function POST(request: NextRequest) {
     }
 
     const decoded = await verifyIdToken(token);
-    const { businessId, replyId, finalText } = await request.json();
+    const { businessId, replyId, editedText } = await request.json();
 
     if (!businessId || !replyId) {
       return NextResponse.json(
@@ -42,11 +47,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get review to find Google review ID
+    const review = await getReviewById(businessId, reply.reviewId);
+    if (!review) {
+      return NextResponse.json(
+        { error: "Review not found" },
+        { status: 404 }
+      );
+    }
+
     // Update reply status to approved
     await updateReplyStatus(businessId, replyId, "approved", decoded.uid);
 
-    // TODO: Call Cloud Function to publish to Google Business Profile
-    // For now, just mark as published
+    // Publish to Google Business Profile
+    const replyText = editedText || reply.generatedText;
+    try {
+      if (business.googleAccessToken && business.googleAccountId) {
+        const reviewName = `accounts/${business.googleAccountId}/reviews/${review.googleReviewId}`;
+        await googleBusinessApi.publishReply(
+          reviewName,
+          replyText,
+          business.googleAccessToken
+        );
+      }
+    } catch (error) {
+      console.error("Error publishing to Google Business Profile:", error);
+    }
+
     await updateReplyStatus(businessId, replyId, "published");
     await updateReviewStatus(businessId, reply.reviewId, "replied");
 

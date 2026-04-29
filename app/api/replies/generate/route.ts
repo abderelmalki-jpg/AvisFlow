@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { verifyIdToken } from "@/lib/utils/auth";
 import { getBusinessById, getReviewById, getDefaultBrandVoice } from "@/lib/db/queries";
 import { createGeneratedReply, incrementBusinessUsage } from "@/lib/db/mutations";
@@ -62,18 +63,45 @@ export async function POST(request: NextRequest) {
     // Increment usage
     const newUsage = await incrementBusinessUsage(businessId);
 
-    // TODO: Call Cloud Function to generate reply with Claude API
-    // For now, create a draft reply with placeholder
+    // Generate reply with Gemini
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+    // Build system prompt with brand voice
+    const systemPrompt = `${brandVoice.systemPromptSegment}
+
+Here are some examples of good responses:
+${brandVoice.examples
+  .map(
+    (ex, i) => `
+Example ${i + 1}:
+Review: "${ex.review}"
+Response: "${ex.replyTemplate}"
+`
+  )
+  .join("")}
+
+Now, generate a response to this review following the same tone and style:
+Rating: ${review.rating}/5
+Review: "${review.text}"
+
+Generate only the response text, nothing else.`;
+
+    const result = await model.generateContent(systemPrompt);
+    const generatedText =
+      result.response.text().trim() ||
+      "Thank you for your review! We appreciate your feedback.";
+
     const generatedReply = await createGeneratedReply(businessId, {
       reviewId,
       brandVoiceId: brandVoice.id,
-      generatedText: `[AI Generated Reply - Rating: ${review.rating}]`,
+      generatedText,
       tokenUsage: 0,
     });
 
     return NextResponse.json({
       success: true,
-      replyId: generatedReply.id,
+      reply: generatedReply,
       usageRemaining: business.monthlyQuota - newUsage,
     });
   } catch (error) {

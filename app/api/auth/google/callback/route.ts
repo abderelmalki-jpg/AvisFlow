@@ -42,12 +42,31 @@ export async function GET(request: NextRequest) {
     // For now, just return the tokens to the client
     const customToken = await adminAuth.createCustomToken(firebaseUser.id);
 
-    // Redirect to dashboard with token
-    const redirectUrl = new URL("/dashboard", request.nextUrl.origin);
+    // Try to get Google Account ID from Google Business API
+    let googleAccountId = undefined;
+    try {
+      const { googleBusinessApi } = await import("@/lib/google/api");
+      const accountsResponse = await googleBusinessApi.getAccounts(
+        tokens.access_token
+      );
+      if (accountsResponse.accounts && accountsResponse.accounts.length > 0) {
+        // Extract account ID from accounts/123456 format
+        const accountName = accountsResponse.accounts[0].name;
+        googleAccountId = accountName.split("/")[1];
+      }
+    } catch (error) {
+      console.warn("Could not fetch Google Account ID:", error);
+    }
+
+    // Redirect back to onboarding with Google tokens
+    const redirectUrl = new URL("/onboarding/google", request.nextUrl.origin);
     redirectUrl.searchParams.set("token", customToken);
     redirectUrl.searchParams.set("googleToken", tokens.access_token);
     if (tokens.refresh_token) {
       redirectUrl.searchParams.set("googleRefreshToken", tokens.refresh_token);
+    }
+    if (googleAccountId) {
+      redirectUrl.searchParams.set("googleAccountId", googleAccountId);
     }
 
     return NextResponse.redirect(redirectUrl);

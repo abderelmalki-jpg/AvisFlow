@@ -8,10 +8,7 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 export function Card({ className, children, ...props }: CardProps) {
   return (
     <div
-      className={clsx(
-        "bg-white rounded-lg border border-gray-200 shadow-sm",
-        className
-      )}
+      className={clsx("bg-fb-surface rounded-xl border border-fb-border shadow-card", className)}
       {...props}
     >
       {children}
@@ -19,28 +16,25 @@ export function Card({ className, children, ...props }: CardProps) {
   );
 }
 
-interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
-}
-
-export function CardHeader({ className, children, ...props }: CardHeaderProps) {
+export function CardHeader({ className, children, ...props }: CardProps) {
   return (
-    <div
-      className={clsx("px-6 py-4 border-b border-gray-200", className)}
-      {...props}
-    >
+    <div className={clsx("px-6 py-4 border-b border-fb-border", className)} {...props}>
       {children}
     </div>
   );
 }
 
-interface CardBodyProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
-}
-
-export function CardBody({ className, children, ...props }: CardBodyProps) {
+export function CardBody({ className, children, ...props }: CardProps) {
   return (
     <div className={clsx("px-6 py-4", className)} {...props}>
+      {children}
+    </div>
+  );
+}
+
+export function CardFooter({ className, children, ...props }: CardProps) {
+  return (
+    <div className={clsx("px-6 py-4 border-t border-fb-border bg-fb-surface2 rounded-b-xl", className)} {...props}>
       {children}
     </div>
   );
