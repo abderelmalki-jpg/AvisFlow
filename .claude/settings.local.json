@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -rf node_modules package-lock.json)",
+      "Bash(npx create-next-app@latest replylocal --typescript --tailwind --app --eslint --no-git --import-alias '@/*' --skip-install --no-git)",
+      "Bash(mv replylocal/* replylocal/.* .)",
+      "Bash(rmdir replylocal *)",
+      "Bash(git commit -m 'Initial commit: ReplyLocal MVP scaffold with Firebase, types, and core structure *)",
+      "Bash(git commit -m 'PHASE 2: Core Models & API implementation *)",
+      "Bash(git commit -m 'PHASE 3: UI Structure and Pages *)",
+      "Bash(git commit -m 'PHASE 4: Implementation Plan and Next Steps *)",
+      "Bash(apt update *)",
+      "Bash(apt install *)",
+      "Bash(npm install *)",
+      "Bash(git remote *)",
+      "Bash(git push *)"
+    ]
+  }
+}

@@ -63,10 +63,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    interface GooglePlace {
+      place_id: string;
+      name: string;
+      formatted_address: string;
+      rating?: number;
+    }
+
     // Transform results
     const results: PlaceSearchResult[] = (data.results || [])
       .slice(0, 10)
-      .map((place: any) => ({
+      .map((place: GooglePlace) => ({
         placeId: place.place_id,
         name: place.name,
         address: place.formatted_address,

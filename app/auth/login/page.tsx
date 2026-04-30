@@ -47,7 +47,7 @@ export default function LoginPage() {
             </svg>
           </div>
           <blockquote className="text-fb-muted text-base leading-relaxed mb-5">
-            "Nous répondons maintenant à tous nos avis Google en moins de 5 minutes par semaine."
+            &quot;Nous répondons maintenant à tous nos avis Google en moins de 5 minutes par semaine.&quot;
           </blockquote>
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-brand-500 flex items-center justify-center">
@@ -124,7 +124,7 @@ export default function LoginPage() {
 
           <p className="text-center text-sm text-fb-muted mt-8">
             Pas encore de compte ?{" "}
-            <Link href="/auth/signup" className="text-brand-500 font-medium hover:text-brand-400">S'inscrire</Link>
+            <Link href="/auth/signup" className="text-brand-500 font-medium hover:text-brand-400">S&apos;inscrire</Link>
           </p>
         </div>
       </div>

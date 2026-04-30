@@ -90,7 +90,7 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-fb-text">Tableau de bord</h1>
-          <p className="text-fb-muted text-sm mt-1">Vue d'ensemble de votre activité</p>
+          <p className="text-fb-muted text-sm mt-1">Vue d&apos;ensemble de votre activité</p>
         </div>
         <Link href="/dashboard/reviews"
           className="inline-flex items-center gap-2 px-4 py-2 bg-brand-500 text-white text-sm font-medium rounded-lg hover:bg-brand-600 transition-colors shadow-sm">

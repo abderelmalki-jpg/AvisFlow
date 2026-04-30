@@ -86,8 +86,8 @@ export default function ReviewDetailPage({ params }: { params: Promise<{ id: str
     finally { setPublishing(false); }
   };
 
-  const fmt = (d: any) => {
-    const date = d instanceof Date ? d : d?.toDate?.() ?? new Date(d);
+  const fmt = (d: Date | { toDate?: () => Date } | string | number) => {
+    const date = d instanceof Date ? d : (typeof d === 'object' && d !== null && 'toDate' in d && typeof d.toDate === 'function') ? d.toDate() : new Date(d);
     return date.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
   };
 
@@ -119,7 +119,7 @@ export default function ReviewDetailPage({ params }: { params: Promise<{ id: str
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
           Retour aux avis
         </Link>
-        <h1 className="text-2xl font-bold text-fb-text">Répondre à l'avis</h1>
+        <h1 className="text-2xl font-bold text-fb-text">Répondre à l&apos;avis</h1>
       </div>
 
       {error && (
@@ -176,7 +176,7 @@ export default function ReviewDetailPage({ params }: { params: Promise<{ id: str
                 className="inline-flex items-center gap-2 px-4 py-2 bg-brand-500 text-white text-sm font-medium rounded-lg hover:bg-brand-600 disabled:opacity-50 transition-colors">
                 {generating ? (
                   <><svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Génération...</>
-                ) : <><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>Générer avec l'IA</>}
+                ) : <><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>Générer avec l&apos;IA</>}
               </button>
             </div>
           ) : isEditing ? (

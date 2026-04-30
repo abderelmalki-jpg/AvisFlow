@@ -51,7 +51,7 @@ export default function OnboardingPage() {
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label className="label-base">Nom de l'entreprise *</label>
+          <label className="label-base">Nom de l&apos;entreprise *</label>
           <input
             type="text"
             required
@@ -63,7 +63,7 @@ export default function OnboardingPage() {
         </div>
 
         <div>
-          <label className="label-base">Secteur d'activité *</label>
+          <label className="label-base">Secteur d&apos;activité *</label>
           <select
             value={formData.industry}
             onChange={(e) => setFormData({ ...formData, industry: e.target.value })}

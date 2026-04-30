@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { exchangeCodeForToken } from "@/lib/google/oauth";
-import { adminAuth, adminDb } from "@/lib/firebase/admin";
+import { adminAuth } from "@/lib/firebase/admin";
 import { getOrCreateUser } from "@/lib/utils/auth";
 
 export async function GET(request: NextRequest) {
   try {
     const code = request.nextUrl.searchParams.get("code");
-    const state = request.nextUrl.searchParams.get("state");
+    // const state = request.nextUrl.searchParams.get("state");
 
     if (!code) {
       return NextResponse.json(

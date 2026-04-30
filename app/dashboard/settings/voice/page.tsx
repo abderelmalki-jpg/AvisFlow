@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/contexts/AuthContext";
 import { useBusinesses } from "@/hooks/useBusinesses";
 import { BrandVoice } from "@/lib/types";
-import { Card, CardHeader, CardBody } from "@/components/common/Card";
+import { Card, CardBody } from "@/components/common/Card";
 import { Button } from "@/components/common/Button";
 
 export default function VoiceSettingsPage() {

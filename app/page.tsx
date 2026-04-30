@@ -66,7 +66,7 @@ export default function Home() {
         <section className="max-w-6xl mx-auto px-6 py-28 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-brand-500/10 text-brand-400 text-xs font-medium rounded-full mb-8 border border-brand-500/20">
             <span className="w-1.5 h-1.5 bg-brand-500 rounded-full animate-pulse" />
-            Propulsé par l'IA · Gemini
+            Propulsé par l&apos;IA · Gemini
           </div>
 
           <h1 className="text-5xl sm:text-6xl font-bold text-fb-text leading-tight mb-6">

@@ -2,7 +2,6 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
 import {
-  getFirestore,
   Firestore,
   initializeFirestore,
   persistentLocalCache,
@@ -19,7 +18,7 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-let app = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig);
+const app = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 export const db = initializeFirestore(app, {

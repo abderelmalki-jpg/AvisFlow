@@ -33,7 +33,10 @@ export const syncReviews = functions.https.onCall(async (data, context) => {
       throw new functions.https.HttpsError("not-found", "Business not found");
     }
 
-    const businessData = business.data() as any;
+    const businessData = business.data();
+    if (!businessData) {
+      throw new functions.https.HttpsError("not-found", "Business data not found");
+    }
 
     // Verify ownership
     if (businessData.ownerId !== context.auth.uid) {
@@ -87,7 +90,10 @@ export const generateReply = functions.https.onCall(async (data, context) => {
       throw new Error("Brand voice not found");
     }
 
-    const voiceData = brandVoice.data() as any;
+    const voiceData = brandVoice.data();
+    if (!voiceData) {
+      throw new Error("Brand voice data not found");
+    }
 
     // Build prompt
     const systemPrompt = `You are a helpful AI assistant that generates professional and personalized responses to Google reviews for businesses.
@@ -97,7 +103,7 @@ ${voiceData.description}
 
 Examples of the tone:
 ${voiceData.examples
-  .map((ex: any) => `Review: "${ex.review}"\nReply: "${ex.replyTemplate}"`)
+  .map((ex: { review: string; replyTemplate: string }) => `Review: "${ex.review}"\nReply: "${ex.replyTemplate}"`)
   .join("\n\n")}
 
 ${voiceData.systemPromptSegment}`;
@@ -165,7 +171,7 @@ export const publishReply = functions.https.onCall(async (data, context) => {
     );
   }
 
-  const { businessId, replyId, reviewId } = data;
+  const { businessId, replyId, _reviewId } = data;
 
   if (!businessId || !replyId) {
     throw new functions.https.HttpsError(

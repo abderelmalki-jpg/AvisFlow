@@ -95,8 +95,8 @@ export default function HistoryPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4"><Stars rating={item.rating} /></td>
-                  <td className="px-6 py-4 max-w-[180px]"><p className="text-fb-muted text-xs truncate italic">"{item.reviewText}"</p></td>
-                  <td className="px-6 py-4 max-w-[180px]"><p className="text-fb-muted text-xs truncate">"{item.replyText}"</p></td>
+                  <td className="px-6 py-4 max-w-[180px]"><p className="text-fb-muted text-xs truncate italic">&quot;{item.reviewText}&quot;</p></td>
+                  <td className="px-6 py-4 max-w-[180px]"><p className="text-fb-muted text-xs truncate">&quot;{item.replyText}&quot;</p></td>
                   <td className="px-6 py-4 text-fb-dim text-xs whitespace-nowrap">{item.date}</td>
                 </tr>
               ))}

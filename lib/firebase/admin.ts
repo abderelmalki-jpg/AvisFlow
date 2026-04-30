@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 if (!admin.apps.length) {
-  let adminConfig: any = {
+  let adminConfig: admin.AppOptions = {
     projectId: process.env.FIREBASE_PROJECT_ID,
     storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
   };

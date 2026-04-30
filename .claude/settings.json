@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "PowerShell(node --version)",
+      "PowerShell(npm --version)",
+      "Bash(cat .env.local)",
+      "Bash(cat .env.example)",
+      "PowerShell(netstat -ano)"
+    ]
+  }
+}

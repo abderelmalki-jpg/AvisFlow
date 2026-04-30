@@ -76,7 +76,7 @@ export const getReviewsByBusiness = async (
   businessId: string,
   status?: "pending" | "replied" | "archived"
 ): Promise<Review[]> => {
-  let query: any = adminDb
+  let query: FirebaseFirestore.Query = adminDb
     .collection("businesses")
     .doc(businessId)
     .collection("reviews");

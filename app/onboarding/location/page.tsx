@@ -89,7 +89,7 @@ export default function AddLocationPage() {
       {!searchResults.length ? (
         <form onSubmit={handleSearch} className="space-y-4">
           <div>
-            <label className="label-base">Nom de l'établissement *</label>
+            <label className="label-base">Nom de l&apos;établissement *</label>
             <input type="text" required value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="input-base" placeholder="ex: Restaurant Le Gourmet" />

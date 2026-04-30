@@ -120,7 +120,7 @@ export default function ReviewsPage() {
               </svg>
             </div>
             <p className="text-fb-text text-sm font-medium mb-1">Aucun avis en attente</p>
-            <p className="text-fb-dim text-xs">Cliquez sur "Synchroniser" pour importer vos avis Google.</p>
+            <p className="text-fb-dim text-xs">Cliquez sur &quot;Synchroniser&quot; pour importer vos avis Google.</p>
           </div>
         ) : (
           <table className="w-full text-sm">
@@ -151,7 +151,7 @@ export default function ReviewsPage() {
                   </td>
                   <td className="px-6 py-4"><StatusBadge status={r.status} /></td>
                   <td className="px-6 py-4 text-fb-dim text-xs whitespace-nowrap">
-                    {new Date(r.createdAt instanceof Date ? r.createdAt : (r.createdAt as any)?.toDate?.() ?? r.createdAt).toLocaleDateString("fr-FR")}
+                    {new Date(r.createdAt instanceof Date ? r.createdAt : (typeof r.createdAt === 'object' && r.createdAt !== null && 'toDate' in r.createdAt && typeof r.createdAt.toDate === 'function') ? r.createdAt.toDate() : r.createdAt).toLocaleDateString("fr-FR")}
                   </td>
                   <td className="px-6 py-4">
                     <Link href={`/dashboard/reviews/${r.id}`}

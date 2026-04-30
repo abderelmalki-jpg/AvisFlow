@@ -39,7 +39,7 @@ export const createBusiness = async (
     id: businessId,
     ownerId,
     name: data.name,
-    industry: data.industry as any,
+    industry: data.industry as Business["industry"],
     subscriptionStatus: "trialing",
     monthlyQuota: 50,
     currentMonthUsage: 0,
@@ -128,7 +128,7 @@ export const createReview = async (
     googleAuthorName: data.googleAuthorName,
     rating: data.rating,
     text: data.text,
-    sentiment: data.sentiment as any,
+    sentiment: data.sentiment as Review["sentiment"],
     status: "pending",
     createdAt: new Date(),
     syncedAt: new Date(),
@@ -186,7 +186,7 @@ export const updateReplyStatus = async (
   status: "draft" | "approved" | "published" | "rejected",
   userId?: string
 ): Promise<void> => {
-  const update: any = {
+  const update: Partial<GeneratedReply> & { approvedAt?: Date; approvedBy?: string; updatedAt: Date } = {
     status,
     updatedAt: new Date(),
   };
@@ -224,7 +224,7 @@ export const updateReviewStatus = async (
 export const incrementBusinessUsage = async (
   businessId: string
 ): Promise<number> => {
-  const result = await adminDb
+  await adminDb
     .collection("businesses")
     .doc(businessId)
     .update({
@@ -279,7 +279,7 @@ export const updateBusinessGoogleToken = async (
   googleRefreshToken?: string,
   googleAccountId?: string
 ): Promise<void> => {
-  const update: any = {
+  const update: Partial<Business> & { updatedAt: Date } = {
     googleAccessToken,
     updatedAt: new Date(),
   };
