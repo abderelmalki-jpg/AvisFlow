@@ -5,7 +5,7 @@ import { adminDb, FieldValue } from "@/lib/firebase/admin";
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const token = request.headers.get("Authorization")?.split(" ")[1];
@@ -18,7 +18,7 @@ export async function DELETE(
     }
 
     const decoded = await verifyIdToken(token);
-    const businessId = params.id;
+    const { id: businessId } = await params;
 
     // Verify user owns business
     const business = await getBusinessById(businessId);

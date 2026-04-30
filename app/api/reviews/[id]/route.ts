@@ -4,7 +4,7 @@ import { getBusinessById, getReviewById } from "@/lib/db/queries";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const authHeader = request.headers.get("authorization");
@@ -29,7 +29,8 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    const review = await getReviewById(businessId, params.id);
+    const { id } = await params;
+    const review = await getReviewById(businessId, id);
     if (!review) {
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }

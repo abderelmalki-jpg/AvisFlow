@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/contexts/AuthContext";
 import { useBusinesses } from "@/hooks/useBusinesses";
@@ -19,7 +19,8 @@ function Stars({ rating }: { rating: number }) {
   );
 }
 
-export default function ReviewDetailPage({ params }: { params: { id: string } }) {
+export default function ReviewDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: reviewId } = use(params);
   const { getIdToken } = useAuth();
   const { businesses } = useBusinesses();
   const [review, setReview] = useState<Review | null>(null);
@@ -39,8 +40,8 @@ export default function ReviewDetailPage({ params }: { params: { id: string } })
         if (!token) { setError("Non authentifié"); return; }
         const bid = businesses[0].id;
         const [rr, pr] = await Promise.all([
-          fetch(`/api/reviews/${params.id}?businessId=${bid}`, { headers: { Authorization: `Bearer ${token}` } }),
-          fetch(`/api/replies?businessId=${bid}&reviewId=${params.id}`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`/api/reviews/${reviewId}?businessId=${bid}`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`/api/replies?businessId=${bid}&reviewId=${reviewId}`, { headers: { Authorization: `Bearer ${token}` } }),
         ]);
         if (!rr.ok) throw new Error("Avis introuvable");
         const rd = await rr.json(); setReview(rd.review);
@@ -51,7 +52,7 @@ export default function ReviewDetailPage({ params }: { params: { id: string } })
       } catch (e) { setError(e instanceof Error ? e.message : "Erreur"); }
       finally { setLoading(false); }
     })();
-  }, [businesses, getIdToken, params.id]);
+  }, [businesses, getIdToken, reviewId]);
 
   const handleGenerate = async () => {
     setGenerating(true); setError(null);
